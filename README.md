@@ -1,15 +1,15 @@
 # springboot2
-### 数据访问
+### 1.数据访问
 
 > springboot2 默认的数据源是 **Hibernate**，不再是以前的tomcat。
 
-####1.springboot2-01-jpa
+#### 1.1 springboot2-01-jpa
 
 > 使用[spring data jpa](https://docs.spring.io/spring-data/jpa/docs/2.1.0.RC1/reference/html/)模块。JPA也是基于ORM思想。
 
 ![](img/springdata.png)
 
-##### 1.1 pom依赖导入
+##### 1.1.1 pom依赖导入
 
 ~~~xml
 <dependency>
@@ -27,7 +27,7 @@
 </dependency>
 ~~~
 
-#####1.2 数据库配置
+##### 1.1.2 数据库配置
 
 ~~~yml
 spring:
