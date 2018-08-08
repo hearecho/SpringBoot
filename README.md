@@ -100,4 +100,59 @@ spring:
        - @Basic(fetch=FetchType.EAGER)   即时获取（默认的存取策略）
        - @Basic(fetch=FetchType.LAZY)       延迟获取
      - **@Transient** - 可选，表示该属性并非一个到数据库表的字段的映射，ORM框架将忽略该属性，如果一个属性并非数据库表的字段映射，就务必将其标示为@Transient，否则ORM框架默认其注解为 @Basic
+
    - 关联属性相关的注解
+
+     官方文档
+
+3. 代码
+
+   ~~~java
+   @Entity
+   @Table(name = "w_user")
+   public class UserEntity {
+       @Id
+       @GeneratedValue(strategy = GenerationType.AUTO)
+       private Integer id;
+       private String username;  
+       @Column
+       private String password;
+       @Temporal(TemporalType.TIMESTAMP)
+       @Column(name = "UPDATE_TIME")
+       private Date createTime;
+   
+       //getter和setter方法
+   }
+   ~~~
+
+##### 1.1.4 书写 Repository接口
+
+> **只需要继承一种适应的接口的便可**
+>
+> Respository<T,ID extends Serializable>:统一接口
+>
+> RevisionRepository<T,ID extends Serializable,N extends Number & Comparable<N>> 基于乐观锁机制
+>
+> CrudRepository<T,ID extends Serializable>:基本的CRUD操作
+>
+> PagingAndSortingRespository<T,ID extends Serializable>:基本CRUD及分页
+>
+> JpaRepository<T,ID extends Serializable>：CRUD操作
+
+~~~java
+//继承JpaRepository完成对数据库的操作
+/**
+ * public interface JpaRepository<T, ID>
+ * T  为实体类的类名
+ * ID 为实体类中主键的类型
+ */
+public interface UserRepository extends JpaRepository<UserEntity,Integer> {
+}
+~~~
+
+##### 1.1.5 书写Controller
+
+~~~java
+
+~~~
+
