@@ -1,5 +1,8 @@
 package com.echo.springboot201jpa.entity;
 
+import org.hibernate.annotations.Proxy;
+import org.springframework.context.annotation.Lazy;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -9,19 +12,22 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "w_user")
+@Proxy(lazy = false)
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(unique = true)
     private String username;
 
+    @Column
     private String password;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "UPDATE_TIME")
-    private Date createTime;
+    private Date createTime = new Date();
 
     public Integer getId() {
         return id;
@@ -53,5 +59,12 @@ public class UserEntity {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    @Override
+    public String toString() {
+        return "id:\t"+id+"\nusername:\t"+username+
+                "\npassword:\t"+password+
+                "\ncreated_time:\t"+createTime;
     }
 }

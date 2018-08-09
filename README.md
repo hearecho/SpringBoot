@@ -30,18 +30,18 @@
 ~~~yml
 spring:
   datasource:
-    url: jdbc:mysql://192.168.1.23:3306/java_web?useSSL=false&characterEncoding=utf-8
+    url: jdbc:mysql://192.168.1.23:3306/java_web?useSSL=false&characterEncoding=utf-8&useUnicode=true
     username: root
     password: ssf971114
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
-    database-platform: mysql
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
     hibernate:
       ddl-auto: update
-    properties:
-          hibernate:
-            dialect: org.hibernate.dialect.MySQL5Dialect
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
 #数据库如果要使用 InnoDB引擎就必须加入 org.hibernate.dialect.MySQL5Dialect
 #ddl-auto 有四种模式
 #1、validate- 加载hibernate时，验证创建数据库表结构。
@@ -109,22 +109,26 @@ spring:
    ~~~java
    @Entity
    @Table(name = "w_user")
+   @Proxy(lazy = false)
+   //防止 出现no-session的bug，不使用懒加载
    public class UserEntity {
        @Id
        @GeneratedValue(strategy = GenerationType.AUTO)
        private Integer id;
-       private String username;  
+       @Column(unique = true)
+       private String username;
        @Column
        private String password;
        @Temporal(TemporalType.TIMESTAMP)
        @Column(name = "UPDATE_TIME")
-       private Date createTime;
+       //设置默认值
+       private Date createTime = new Date();
    
        //getter和setter方法
    }
    ~~~
 
-##### 1.1.4 书写 Repository接口
+##### 1.1.4 书写 Repository接口，创建数据库访问的Dao层
 
 > **只需要继承一种适应的接口的便可**
 >
@@ -146,12 +150,74 @@ spring:
  * ID 为实体类中主键的类型
  */
 public interface UserRepository extends JpaRepository<UserEntity,Integer> {
+    /**
+     * 可以自己定义一些函数
+     * 通过用户名获取信息
+     * @param username
+     * @return
+     */
+    UserEntity findByUsername(String username);
+    /**
+     * 使用 jpql 语句编写操作函数
+     * sql语句:  select name ,age from user;
+     * jpql语句: select u.name,u.age from User u;
+     * User 为 实体类名称
+     */
+    @Modifying//有这个注解的函数，返回值 只能是void 或者是 Interger等
+    @Transactional
+    @Query("update UserEntity u set u.username=:new_username where u.username=:username ")
+    void updateUsername(@Param("username") String username,@Param("new_username") String new_username);
 }
 ~~~
 
-##### 1.1.5 书写Controller
+##### 1.1.5 书写Controller，Web层面
 
 ~~~java
+@RestController
+public class UserController {
+    @Autowired
+    UserRepository userRepository;
 
+    /**
+     * http://localhost:8080/getall
+     * @return
+     */
+    @RequestMapping("/getall")
+    public List<UserEntity> getall() {
+        List<UserEntity> list = userRepository.findAll();
+        return list;
+    }
+
+    /**
+     * http://localhost:8080/getonebyid?id=1
+     * @param id
+     * @return
+     */
+    @RequestMapping("/getonebyid")
+    public UserEntity getoneByID(@RequestParam(name = "id",required = true) Integer id) {
+        return userRepository.getOne(id);
+    }
+    /**
+     * http://localhost:8080/getonebyname?username=testUpdate
+     * @param username
+     * @return
+     */
+    @RequestMapping("/getonebyname")
+    public UserEntity getonrByName(@RequestParam(name = "username",required = true) String username) {
+        return userRepository.findByUsername(username);
+    }
+    /**
+     * http://localhost:8080/update?username=testUpdateupdate&new_username=echo
+     * @param username
+     * @param new_username
+     * @return
+     */
+    @RequestMapping("/update")
+    public UserEntity update(@RequestParam(required = true) String username,@RequestParam(required = true) String new_username) {
+        //可以增加校验代码之类的
+        userRepository.updateUsername(username,new_username);
+        return userRepository.findByUsername(new_username);
+    }
+}
 ~~~
 
