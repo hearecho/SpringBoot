@@ -221,3 +221,193 @@ public class UserController {
 }
 ~~~
 
+#### 1.2 springboot2-02-mybatis
+
+> springboot2整合mybatis；
+>
+> 相比较**Hibernate+jpa**来说，我更喜欢mybatis，因为对于mysql语句更加容易修改，自定义。
+>
+> 使用注解的方式；一切由注解解决；
+
+##### 1.2.1 依赖添加
+
+~~~xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.mybatis.spring.boot</groupId>
+	<artifactId>mybatis-spring-boot-starter</artifactId>
+	<version>1.3.2</version>
+</dependency>
+~~~
+
+##### 1.2.2 数据库配置
+
+~~~yml
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.1.23:3306/java_web?useSSL=false&characterEncoding=utf-8&useUnicode=true
+    username: root
+    password: ssf971114
+    driver-class-name: com.mysql.jdbc.Driver
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true 
+~~~
+
+##### 1.2.3 实体类书写，sql文件引入；
+
+~~~mysql
+public class User {
+    private String userId;
+    private String username;
+    private String password;
+    private Date createtime;
+    ////Getters & Setters
+}    
+~~~
+
+~~~mysql
+sql 文件
+USE `java_web`;
+DROP TABLE IF EXISTS `t_user`;
+CREATE TABLE `t_user` (
+  `USER_ID`  integer(50) NULL ,
+  `USERNAME`  varchar(50) NULL ,
+  `PASSWORD`  varchar(255) NULL ,
+  `CREATETIME`  datetime NULL 
+   PRIMARY KEY (`USER_ID`)
+) ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8;
+
+INSERT INTO `t_user` VALUES ('1', 'echo', '123456', '2018-08-10 16:28:31')
+INSERT INTO `t_user` VALUES ('2', 'hear', '123456', '2018-08-10 16:28:32')
+~~~
+
+##### 1.2.4 编写数据层代码
+
+> 编写UserMapper接口使用mybatis的注解和使用SqlProvider
+
+~~~java
+//UserMapper.java
+/**
+* @Mapper 
+* 可以在启动类中使用@MapperScan 来取代@Mapper 这样可以不用在每一个Mapper接口都进行注解
+* ""内容是 Mapper接口所在的包
+* @MapperScan("com.echo.springboot202mybatis.mapper")
+* public class Springboot202MybatisApplication {...}
+*/
+@Mapper
+public interface UserMapper {
+
+    /**
+     * 使用注解编写SQL。
+     * @Select "select * from t_user"
+     * @Update "update t_user set USERNAME=#{username} where USER_ID=#{id}"
+     * @Delete "delete t_user where where USER_ID=#{id}"
+     * @Insert "insert t_user values('hear', '123456', '2018-08-10 16:28:32')
+     * @return List<User>
+     */
+    @Select("select * from t_user")
+    List<User> getall();
+
+    /**
+     * 使用工具类构建复杂的sql语句
+     * @param username
+     * @return
+     */
+    @SelectProvider(type = UserSqlProvider.class,method = "getByUsername")
+    User getByUsername(String username);
+
+    /**
+     * 上述两种方式都可以附加@Results注解来指定结果集的映射关系.
+     * PS：如果符合下划线转驼峰的匹配项可以直接省略不写。
+     */
+    @Results({
+            @Result(property = "userId", column = "USER_ID"),
+            @Result(property = "username", column = "USERNAME"),
+            @Result(property = "password", column = "PASSWORD"),
+            @Result(property = "createtime", column = "CREATETIME")
+    })
+    @Select("select * from t_user")
+    List<User> listSample();
+
+    /**
+     * 论什么方式,如果涉及多个参数,则必须加上@Param注解,否则无法使用EL表达式获取参数。
+     */
+    @Select("select * from t_user where username like #{username} and password like #{password}")
+    User get(@Param("username") String username, @Param("password") String password);
+
+}
+~~~
+
+> SqlProvider 根据复杂的业务需求来动态生成SQL.在UserMapper中的@SelectProvider注解中进行调用。
+>
+> 同时还有其他CRUD四种Provider
+
+~~~java
+/**
+ * UserSqlProvider.java
+ * 目标：使用Java工具类来替代传统的XML文件.(例如：UserSqlProvider.java <-- UserMapper.xml)
+ */
+public class UserSqlProvider {
+    /**
+     * 1.在工具类的方法里,可以自己手工编写SQL。
+     */
+    public String getByUsername(String username) {
+        return "select * from t_user where username =#{username}";
+    }
+
+    /**
+     * 2.可以根据官方提供的API来编写动态SQL。
+     */
+    public String getBadUser(@Param("username") String username, @Param("password") String password) {
+        return new SQL() {{
+            SELECT("*");
+            FROM("t_user");
+            if (username != null && password != null) {
+                WHERE("username like #{username} and password like #{password}");
+            } else {
+                WHERE("1=2");
+            }
+        }}.toString();
+    }
+}
+~~~
+
+##### 1.2.5 Web层面
+
+~~~java
+@RestController
+@RequestMapping("/user")
+public class UserController {
+
+    @SuppressWarnings("all")
+    @Autowired
+    UserMapper userMapper;
+    /***
+     * http://localhost:8080/user/getall
+     * @return
+     */
+    @GetMapping("/getall")
+    public List<User> getall() {
+        return userMapper.getall();
+    }
+    /**
+     * http://localhost:8080/user/getone?username=echo
+     * @param username
+     * @return
+     */
+    @GetMapping("/getone")
+    public User getByUsername(@RequestParam(name = "username",required = true) String username) {
+        return userMapper.getByUsername(username);
+    }
+}
+~~~
+

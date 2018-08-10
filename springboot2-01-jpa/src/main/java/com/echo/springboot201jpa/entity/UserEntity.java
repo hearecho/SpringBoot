@@ -4,7 +4,9 @@ import org.hibernate.annotations.Proxy;
 import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  *@Entity User实体类 自动创建数据表
@@ -27,7 +29,7 @@ public class UserEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "UPDATE_TIME")
-    private Date createTime = new Date();
+    private Date createTime = Calendar.getInstance(Locale.CHINA).getTime();
 
     public Integer getId() {
         return id;
