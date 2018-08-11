@@ -411,3 +411,136 @@ public class UserController {
 }
 ~~~
 
+#### 1.3 springboot2-03-druid
+
+> springboot2整合druid；java配置真好用。
+
+##### 1.3.1 依赖注入
+
+> 只是简单的使用 druid数据源，并不会对mybatis 造成影响，如果要继续整合，把mybatis加上就可以了。
+
+~~~xml
+<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+<dependency>
+	<groupId>com.alibaba</groupId>
+	<artifactId>druid</artifactId>
+	<version>1.1.10</version>
+</dependency>
+~~~
+
+##### 1.3.2 配置属性
+
+> 全部为自定义属性，会被java配置文件@Value调用
+
+~~~yml
+#配置属性使用application.yml
+connection:
+  url: jdbc:mysql://192.168.1.24:3306/java_web?useUnicode=true&characterEncoding=utf-8&useSSL=false
+  username: root
+  password: ssf971114
+druid:
+  # 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时
+  initialSize: 1
+  #    最小连接池数量
+  minIdle: 1
+  # 最大连接池数量
+  maxActive: 10
+  #    配置获取连接等待超时的时间
+  maxWait: 10000
+  #  配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+  timeBetweenEvictionRunsMillis: 60000
+  #  配置一个连接在池中最小生存的时间，单位是毫秒
+  minEvictableIdleTimeMillis: 300000
+  #  验证连接有效与否的SQL，不同的数据配置不同
+  validationQuery: select 1
+  #  建议配置为true，不影响性能，并且保证安全性。
+  #  申请连接的时候检测，如果空闲时间大于
+  #  timeBetweenEvictionRunsMillis，
+  #  执行validationQuery检测连接是否有效。
+  testWhileIdle: true
+  #  申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。
+  #  这里建议配置为TRUE，防止取到的连接不可用
+  testOnBorrow: true
+  #  归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+  testOnReturn: false
+  #  是否缓存preparedStatement，也就是PSCache。
+  #  PSCache对支持游标的数据库性能提升巨大，比如说oracle。
+  #  在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。
+  #  作者在5.5版本中使用PSCache，通过监控界面发现PSCache有缓存命中率记录，
+  #  该应该是支持PSCache。
+  #  打开PSCache，并且指定每个连接上PSCache的大小
+  poolPreparedStatements: true
+  maxPoolPreparedStatementPerConnectionSize: 20
+  #  属性类型是字符串，通过别名的方式配置扩展插件，
+  #  常用的插件有：
+  #  监控统计用的filter:stat
+  #  日志用的filter:log4j
+  #  防御sql注入的filter:wall
+  filters: stat,wall
+  # 访问的用户名
+  loginUsername: admin
+  # 访问的密码
+  loginPassword: admin
+~~~
+
+##### 1.3.3 书写java配置文件
+
+> 使用@Configuration注解，配置类；
+
+~~~java
+@Configuration
+public class DruidConfig {
+    private static final Log log = LogFactory.getLog(DruidConfig.class);
+
+    @Value("${connection.url}")
+    private String connectionUrl;
+    @Value("${connection.username}")
+    private String username;
+    @Value("${connection.password}")
+    ......
+    //    配置数据源
+    @Bean(name = "basisDataSource", initMethod = "init", destroyMethod = "close")
+    public DruidDataSource initDataSource() {
+        log.info("初始化DruidDataSource");
+        DruidDataSource dds = new DruidDataSource();
+        dds.setDriverClassName("com.mysql.jdbc.Driver");
+        dds.setUrl(connectionUrl);
+        ......
+        try {
+            dds.setFilters(filters);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dds;
+    }
+
+    /**
+     *  配置Druid的监控
+     *  配置一个管理后台
+     * @return
+     */
+    @Bean
+    public ServletRegistrationBean druidServlet() {
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
+        //设置登录查看信息的账号密码.
+        .....
+    }
+    /**
+     * 配置监控的filter
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean filterRegistrationBean() {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setFilter(new WebStatFilter());
+        ....
+    }
+}
+~~~
+
+##### 1.3.4 [访问主页](http://localhost:8080/druid)
+
+![](https://raw.githubusercontent.com/hearecho/springboot/master/img/druidlogin.PNG)
+
+![](https://raw.githubusercontent.com/hearecho/springboot/master/img/druidadmin.PNG)
+

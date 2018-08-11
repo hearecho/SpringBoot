@@ -1,0 +1,12 @@
+package com.echo.springboot203druid;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Springboot203DruidApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Springboot203DruidApplication.class, args);
+	}
+}
