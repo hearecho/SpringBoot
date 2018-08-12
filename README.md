@@ -544,3 +544,87 @@ public class DruidConfig {
 
 ![](https://raw.githubusercontent.com/hearecho/springboot/master/img/druidadmin.PNG)
 
+### 2.springboot2 配置
+
+> Springboot2 采用的全局配置模式；
+>
+> 配置文件名字是固定的 ，不使用以前的xml，json之类的配置文件；
+>
+> 1. appliaction.properties
+> 2. application.yml
+>
+> 之后使用注解的方式将配置文件注入；
+
+#### 2.1 yml配置文件语法
+
+##### 2.1.1 基本语法
+
+> key:(空格)value
+>
+> 空格必须有，利用缩进换行来表示层级关系，缩进一样的是同一个层级的；
+>
+> 属性和值也是大小写敏感
+
+~~~yml
+#示例
+server:
+  port: 80
+  servlet:
+    path: /demo
+~~~
+
+##### 2.1.2 值的写法
+
+1. 字面量
+
+   > 字面直接来写，字符串默认不用加上单引号或者双引号；
+   >
+   > 1. 字符串加双引号，转译
+   >
+   >    ~~~ ==java
+   >    name: "zhangsan\nlisi" ==> "zhangsan换行lisi"
+   >    ~~~
+   >
+   > 2. 字符串加单引号，不转译
+   >
+   >    ~~~java
+   >    name: 'zhangsan\nlisi' ==> "zhangsan\nlisi"
+   >    ~~~
+
+2. 对象，Map(属性和值) 键值对
+
+   > 1. key: value 方式 注意冒号后买你的空格
+   >
+   >    ~~~java
+   >    friends:
+   >    	lastName: zhangsan
+   >    	age: 20
+   >    ~~~
+   >
+   > 2. 行内写法 注意冒号后买你的空格
+   >
+   >    ~~~java
+   >    friends: {lastName: zhangsan,age: 18}
+   >    ~~~
+   >
+   >    
+
+3. 数组（List，Set）： 用 - 表示数组中的一个元素
+
+   > 1. 一般写法
+   >
+   >    ~~~yml
+   >    pets: 
+   >     - cat
+   >     - dog
+   >     - pig
+   >    ~~~
+   >
+   > 2. 行内写法
+   >
+   >    ~~~yml
+   >    pets: [cat,dog,pig]
+   >    ~~~
+
+#### 2.2 prperties配置文件语法
+
