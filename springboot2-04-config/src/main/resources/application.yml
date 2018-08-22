@@ -2,3 +2,11 @@ server:
   port: 80
   servlet:
     path: /demo
+person:
+  last-name: 李斯
+  age: 12
+  maps: {k1: v1,k2: v2}
+  lists: [a,b,v]
+  boss: false
+
+
