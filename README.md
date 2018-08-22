@@ -544,7 +544,7 @@ public class DruidConfig {
 
 ![](https://raw.githubusercontent.com/hearecho/springboot/master/img/druidadmin.PNG)
 
-### 2.springboot2 配置
+### 2.[springboot2 配置](https://docs.spring.io/spring-boot/docs/2.0.4.RELEASE/reference/htmlsingle/#boot-features-external-config)
 
 > Springboot2 采用的全局配置模式；
 >
@@ -627,4 +627,256 @@ server:
    >    ~~~
 
 #### 2.2 prperties配置文件语法
+
+> 相比较yml 不直观，重复较多
+>
+> ~~~java
+> person.name = zhangsan
+> person.age = 20
+> ~~~
+
+#### 2.3配置文件注入
+
+> 导入[配置文件处理器](https://docs.spring.io/spring-boot/docs/2.0.4.RELEASE/reference/html/configuration-metadata.html#configuration-metadata-annotation-processor)，编写配置文件的时候有提示
+>
+> ~~~xml
+> <dependency>    
+>     <groupId>org.springframework.boot</groupId>    
+>     <artifactId>spring‐boot‐configuration‐processor</artifactId>    
+>     <optional>true</optional> 
+> </dependency> 
+> ~~~
+>
+> 示例配置文件,两种配置文件可以同时存在；相同属性优先properties文件
+>
+> ~~~yml
+> #application.properties
+> person.age=12
+> person.boss=false
+> person.last-name=里斯
+> person.maps.k1=v1
+> person.maps.k2=v2
+> person.lists=1,2,3
+> #application.yml
+> server:
+>   port: 80
+>   servlet:
+>     path: /demo
+> person:
+>   last-name: 里斯
+>   age: 12
+>   maps: {k1: v1,k2: v2}
+>   lists: [a,b,v]
+>   boss: false
+> ~~~
+
+##### 2.3.1 @ConfigurationProperties 注解
+
+> 将文本的所有属性和配置文件中 的相关配置进行绑定； 
+>
+> 只有这个组件是容器中的组件，才能提供到容器中 ；
+>
+> 专门编写了一个javaBean和配置文件进行映射，直接使用 @ConﬁgurationProperties
+
+~~~java
+@Component
+@ConfigurationProperties(prefix = "person")
+//针对配置文件person下面的属性进行映射
+public class Person {
+    private String lastName;
+    private Integer age;
+    private Boolean boss;
+    private Map<String,Object> maps;
+    private List<Object> lists;
+
+    //getter 和 setter  方法
+    //不能省略
+}
+~~~
+
+##### 2.3.2 @Value注解
+
+> @Value注解进行单个注解，不要getter和setter方法；
+>
+> 不支持复杂类型的映射例如：类和map图等；
+>
+> 经常在某一个业务中使用到配置文件的一个值的时候才会使用
+
+~~~java
+@Component
+public class PersonValue {
+    @Value("${person.last-name}")
+    private String lastName;
+    @Value("#{11*2}")
+    private Integer age;
+    @Value("${person.boss}")
+    private Boolean boss;
+//    不支持复杂类型,类 map等
+//    @Value("${person.maps}")
+    private Map<String,Object> maps;
+    @Value("${person.lists}")
+    private List<Object> lists;
+	//不需要getter和setter
+}
+~~~
+
+##### 2.3.3 两种注解的区别
+
+|                    | @Configurationproperties |  @Value  |
+| :----------------: | :----------------------: | :------: |
+|        功能        |   批量诸如配置文件属性   | 单个指定 |
+|  松散绑定（语法）  |           支持           |  不支持  |
+|   spEl：#{11*2}    |          不支持          |   支持   |
+| JSR303校验：@Email |           支持           |  不支持  |
+|  复杂类型：类，图  |           支持           |  不支持  |
+
+##### 2.3.4 其他注解
+
+1. 加载指定的properties配置文件：@PropertySource
+
+   ~~~java
+   //我们可以建立一个专门用于数据库连接池的配置文件 datasource.properties
+   // 前提是先导入数据库连接依赖
+   connection.url=jdbc:mysql://192.168.1.24:3306/java_web?useUnicode=true&characterEncoding=utf-8&useSSL=false
+   connection.username=root
+   connection.root=ssf971114
+   connection.driver-class-name:com.mysql.jdbc.Driver
+   //对应的配置文件注入
+   @PropertySource(value={"classpath:datasource.properties"})
+   @Component
+   @ConfigurationProperties(prefix = "connection")
+   public class DuridConfig() {
+       private String username;
+       ....
+   }
+   ~~~
+
+2. @ImportResource : 导入Spring配置文件，并且让这个配置文件生效
+
+   > 这是以前的spring用的xml写法，使用这个注解注入到启动类中；一般用于配置组件；
+   >
+   > springboot使用全注解方式@Conﬁguration+@Bean来替代这种方式；
+
+   ~~~java
+   //HelloService组件
+   public class HelloService {
+   }
+   //MyAppConfig.java配置类
+   @Configuration
+   public class MyAppConfig {
+       @Bean
+       public HelloService helloService() {
+           System.out.println("配置类给容器添加了HelloService组件");
+           return new HelloService();
+       }
+   }
+   //测试方法
+   @Autowired
+   ApplicationContext ioc;
+   @Test
+   public void testHelloService(){
+   	//Bean  参数是方法名
+       boolean b = ioc.containsBean("helloService");
+       System.out.println(b);
+   }
+   ~~~
+
+#### 2.4配置文件占位符
+
+##### 2.4.1 随机数
+
+> \${random.value} 、\${random.int}、\${random.long} 、\${random.int(10)}  、\${random.int[100,200]}
+>
+> 在配置文件中使用
+
+~~~java
+person.age=${random.int(10,30)}
+person.boss=false
+person.last-name=里斯${random.uuid}
+person.maps.k1=${random.int}
+person.maps.k2=${person.last-name}
+#没有声名或者在后面声名的数据需要设置默认值
+person.lists=1,2,3,${person.no: 4}
+~~~
+
+#### 2.5 Profile 配置不同环境下不同的配置
+
+> 主配置文件编写的时候，文件名可以是 application{proﬁle}.properties/yml 
+>
+> - application.properties
+> - application-dev.properties
+> - application-prod.properties
+>
+> 默认使用的是application.properties配置文件，所以可以在该配置文件中指定用哪个配置文件
+>
+> ~~~properties
+> spring.profiles.active=dev
+> ~~~
+>
+> 一般yml配置文件推荐使用文档块
+
+##### 2.5.1 YAML文档块
+
+~~~yaml
+server:
+ port: 80
+spring:
+ profiles:
+  active: dev
+  
+---
+
+server:
+ port: 8081
+spring:
+ profiles: dev
+ 
+---
+
+server:
+ port: 81
+spring:
+ profiles: prod
+~~~
+
+##### 2.5.2启动方式
+
+1. 在配置文件中激活，常用
+
+2. 命令行：
+
+   ~~~shell
+   --spring.profiles.active=dev
+   ~~~
+
+3. 打包成jar包后，用命令行启动，优先级大于配置文件
+
+   ~~~shell
+   java -jar springboot2-04-config.jar --spring.profiles.active=dev
+   ~~~
+
+4. 虚拟机参数，没用过
+
+   ~~~shell
+   -Dspring.profiles.active=dev
+   ~~~
+
+#### 2.6 加载配置文件的位置
+
+> SpringBoot启动扫描以下位置的appliaction.properties 或者 application.yml文件作为配置文件
+>
+> - ./config/
+> - ./
+> - classpath:/config/
+> - classpath:/
+>
+> 优先级从高到低，高优先级会覆盖低优先级的相同配置；配置互补
+>
+> 也可以通过spring.conﬁg.location来改变默认配置
+>
+> ~~~properties
+> server.servlet.context-path=***
+> ~~~
+>
+> [引入外部配置官方文档](https://docs.spring.io/spring-boot/docs/2.0.1.RELEASE/reference/htmlsingle/#boot-features-external-config)
 
