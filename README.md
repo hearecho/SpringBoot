@@ -880,3 +880,71 @@ spring:
 >
 > [引入外部配置官方文档](https://docs.spring.io/spring-boot/docs/2.0.1.RELEASE/reference/htmlsingle/#boot-features-external-config)
 
+### 3.springboot2 日志
+
+#### 3.1日志框架
+
+> 日志框架一般调用的为抽象层次
+>
+> | 日志抽象层                                                   | 日志实现                         |
+> | ------------------------------------------------------------ | -------------------------------- |
+> | ~~JCL(Jakarta Commons Logging)~~ SLF4j(Simple Logging Facade for Java) ~~jboss-logging~~ | ~~Log4j~~,~~JUL~~,Log4j2 Logback |
+>
+> springboot 推荐使用 SLF4j和logback
+>
+> 注意：后续会有不同的日志框架之间的整合
+
+#### 3.2 SLF4j的使用 
+
+##### 3.2.1 简单使用
+
+> 每个日志框架的实现框架都有自己的配置文件。使用slf4j以后，配置文件还是 做成日志实现框架本身的配置文件；
+
+~~~java
+import org.slf4j.Logger; 
+import org.slf4j.LoggerFactory;
+ 
+public class HelloWorld {  
+    public static void main(String[] args) {    
+        Logger logger = LoggerFactory.getLogger(HelloWorld.class);    
+        logger.info("Hello World");  
+    } 
+}
+~~~
+
+#### 3.3 统一日志框架
+
+> 同意日志框架的主要部分；
+>
+> 1. 将系统中其他日志框架先排除
+> 2. 用中间包替换原有的日志框架
+> 3. 导入slf4j的实现
+
+#### 3.4 日志的使用
+
+> 日志的级别：trace-debug-info-warn-error，（从低到高）
+>
+> SpringBoot默认给的是info级别，如果没指定就是默认的root级别 ，日志就只会在这个级别以后的高级别生效
+>
+> 修改配置:
+>
+> ~~~properties
+> logging.level.com.echo.springboot205log=trace
+> #不指定path就是当前目录下生成springboot.log 
+> #logging.file=springboot.log 
+> #当前磁盘下根路径创建spring文件中log文件夹，使用spring.log作为默认 
+> logging.path=/spring/log 
+> #控制台输出的日志格式 日期 + 线程号 + 靠左 级别 +全类名50字符限制+消息 +换行 
+> logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n 
+> #指定文件中日志输出的格式 
+> logging.pattern.ﬁle=xxx
+> #日志输出格式:
+> #控制台输出的日志格式 
+> #%d：日期 #%thread：线程号 
+> #%-5level：靠左 级别 
+> #%logger{50}：全类名50字符限制,否则按照句号分割 
+> #%msg：消息+换行 
+> #%n：换行 
+> ~~~
+>
+>  
