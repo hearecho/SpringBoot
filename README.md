@@ -947,4 +947,9 @@ public class HelloWorld {  
 > #%n：换行 
 > ~~~
 >
->  
+
+### 4.简单的web demo 显示爬虫内容
+
+> 使用springboot2自带的hibernate与数据库进行连接；使用thymeleaf作为前端的视图解析器；
+>
+> 
