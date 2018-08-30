@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer"/>
+    <title>用户关注</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/home.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="/common/bar :: navbar"></div>
+
+<div class="container-fluid" >
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <form class="form-inline" id="queryinfo" >
+                    <input type="text" class="form-control" name="mid" id="mid" placeholder="用户id">
+                    &nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" id="submit">查询</button>
+                </form>
+                <span class="bg-info">用于查询b站up的粉丝数目,和他关注的数目</span><br/>
+                <span id="error" class="bg-danger"></span>
+                <br/>
+                <!--<textarea readonly class="form-control" style="height: 500px;resize: none" id="datashow"></textarea>-->
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="card" style="width:200px;margin: auto">
+                            <img class="card-img-top" src="http://static.runoob.com/images/mix/img_avatar.png" alt="Card image" style="width:100%" id="face">
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="input-group mb-9">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" >用户名</span>
+                            </div>
+                            <input type="text" class="form-control" readonly id="name">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">等级</span>
+                            </div>
+                            <input type="text" class="form-control" readonly id="level">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">性别</span>
+                            </div>
+                            <input type="text" class="form-control" readonly id="sex">
+                        </div>
+                        <br>
+                        <div class="input-group mb-9">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">生日</span>
+                            </div>
+                            <input type="text" class="form-control" readonly id="birthday">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">注册时间</span>
+                            </div>
+                            <input type="text" class="form-control" readonly id="regtime">
+                        </div>
+                        <br/>
+                        <div class="input-group mb-9">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">关注</span>
+                            </div>
+                            <input type="text" class="form-control" readonly id="following">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">粉丝</span>
+                            </div>
+                            <input type="text" class="form-control" readonly id="follower">
+                        </div>
+                        <br>
+
+                    </div>
+                </div>
+                <br>
+                <div class="input-group mb-9">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">简介</span>
+                    </div>
+                    <input type="text" class="form-control" readonly id="desc">
+                </div>
+
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/followinfo.js"></script>
+</html>
