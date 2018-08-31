@@ -24,6 +24,9 @@ $("#submit").click(function () {
                     if(str=="#face"){
                         $(str).attr("src",info[k]);
                     }
+                    if(str=="#error") {
+                        $(str).text(info[k]);
+                    }
                     $(str).val(info[k]);
                 }
                 // console.log(data.get("regtime"));

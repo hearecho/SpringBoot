@@ -4,6 +4,7 @@ import com.echo.webdemo.entity.UserEntity;
 import com.echo.webdemo.repository.UserRepository;
 import com.echo.webdemo.service.DataService;
 import com.echo.webdemo.service.impl.DataServiceImpl;
+import com.echo.webdemo.utils.DealDate;
 import com.echo.webdemo.utils.DealJson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,6 +73,11 @@ public class WebdemoApplicationTests {
     @Test
     public void testJosn() {
 	    DealJson.DealJson("");
+    }
+    @Test
+    public void testDate() {
+        String date = DealDate.TimeStampToString(1344500978L);
+        System.out.println(date);
     }
 
 }

@@ -3,6 +3,7 @@ package com.echo.webdemo.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.echo.webdemo.service.DataService;
 import com.echo.webdemo.service.bilibiliSpider;
+import com.echo.webdemo.utils.DealDate;
 import com.echo.webdemo.utils.DealJson;
 
 import java.io.IOException;
@@ -24,21 +25,29 @@ public class bilibiliSpiderImpl implements bilibiliSpider {
         String url = "https://space.bilibili.com/ajax/member/GetInfo";
 
         String resu = dataService.PostReq(form,headers,url);
-
+//        System.out.println(resu);
         JSONObject jsonObject =JSONObject.parseObject(resu);
         Map<String,String> map = new HashMap<>();
 
         JSONObject data = (JSONObject)jsonObject.get("data");
-        JSONObject verify = (JSONObject)data.get("official_verify");
-        JSONObject level = (JSONObject)data.get("level_info");
+        if(data.getString("name").equals("bilibili")) {
+            map.put("error","不存在此用户");
+        }else {
+            //处理不存在的用户
+            JSONObject verify = (JSONObject)data.get("official_verify");
+            JSONObject level = (JSONObject)data.get("level_info");
 
-        map.put("regtime",data.getString("regtime"));
-        map.put("birthday",data.getString("birthday"));
-        map.put("sex",data.getString("sex"));
-        map.put("face",data.getString("face"));
-        map.put("name",data.getString("name"));
-        map.put("desc",verify.getString("desc"));
-        map.put("level",level.getString("current_level"));
+            int regtime = Integer.parseInt(data.getString("regtime"));
+            String time = DealDate.TimeStampToString(regtime);
+            map.put("regtime",time);
+            map.put("birthday",data.getString("birthday"));
+            map.put("sex",data.getString("sex"));
+            map.put("face",data.getString("face"));
+            map.put("name",data.getString("name"));
+            map.put("desc",verify.getString("desc"));
+            map.put("level",level.getString("current_level"));
+            map.put("error","");
+        }
 
         return map;
     }
