@@ -1,25 +1,25 @@
 package com.echo.websocket.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.echo.websocket.config.GetHttpSessionConfigurator;
 import com.echo.websocket.entity.MessageEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpSession;
+import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Websocket  最主要的  ServerEndpoint这个注解
  */
 @Component
-@ServerEndpoint("/webSocket/{homeId}")
+@ServerEndpoint(value = "/webSocket/{homeId}",configurator = GetHttpSessionConfigurator.class)
 public class MyWebSocket {
     //日志
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -36,28 +36,25 @@ public class MyWebSocket {
      * 有一个新用户连接就开启一个会话， type=1  代表消息是建立新连接的消息
      * 连接成功后设置   1.信息类型Type=1 : 代表建立新连接的消息
      *               2. 设置活跃用户数目 :  就是 Set的大小
-     *               3. 设置用户的id 和 name
+     *               3. 设置用户的id 和 name   **未完成  Session取不出来,一直为空
      *               4. 设置房间的homeId
-     *               5. 设置连接时间
+     *               5. 设置连接时间,使用毫秒级别的timestamp
+     *
+     * 设计思路: 1.新加入连接需要广播消息，群发的消息也需要广播
      * @param session
+     * @param config   用于取出httpSession
      */
     @OnOpen
-    public void onOpen(Session session,@PathParam("homeId") Integer homeId) {
+    public void onOpen(Session session, @PathParam("homeId") Integer homeId) {
         this.session = session;
         webSockets.add(this);
-        //获取聊天房间的id
-        System.out.println(homeId);
-        //测试session
-//        System.out.println(session.getBasicRemote());
-//        System.out.println(session.getAsyncRemote());
-//        System.out.println(session.getContainer());
-//        System.out.println(session.getId());   //随着连接数目 从0 开始递增  断开数目并不会减少
-//        System.out.println(session.getQueryString());
-//        System.out.println(session.getPathParameters());
-//        System.out.println(session.getRequestURI());
 
+        HttpSession httpSession1 = (HttpSession) session.getUserProperties().get("javax.servlet.http.HttpSession");
+        System.out.println(httpSession1.getId());
 
-        //设置发送的数据
+        /**
+         * 设置信息类的内容
+         */
         messageEntity.setType(1);
         messageEntity.setUserNum(webSockets.size());
         messageEntity.setHomeId(homeId);
@@ -65,7 +62,6 @@ public class MyWebSocket {
         messageEntity.setMessage("有新的连接");
 
         ObjectMapper mapper = new ObjectMapper();
-
         String Json = "";
         try {
             Json = mapper.writeValueAsString(messageEntity);

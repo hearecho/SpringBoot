@@ -77,24 +77,23 @@
     var websocket = null;
     var cahtNum = $('.chat-num').text();
     sessionStorage.setItem("userid","test1");
-    //获取url
-    // alert(window.location.href);
     var url = window.location.href;
     arr = url.split("/");
-    // console.log(arr);
-    // console.log(arr.pop());
     if ('WebSocket' in window) {
-        websocket = new WebSocket('ws://127.0.0.1:8080/wss/webSocket/'+parseInt(arr.pop()));
+        var host = window.location.host
+        console.log('ws://'+host+'/wss/webSocket/')
+        websocket = new WebSocket('ws://'+host+'/wss/webSocket/'+parseInt(arr.pop()));
     } else {
         alert('该浏览器不支持websocket');
     }
 
     websocket.onopen = function (event) {
         //发送 用户id, username,
-        headers_message = {
+        var headers_message = {
             "userId":"MKDNB-MKLML456",
             "username":"hear",
         };
+        sessionStorage.setItem("name",JSON.stringify(headers_message));
         console.log('websocket建立连接');
     };
 
@@ -107,10 +106,10 @@
         console.log('websocket收到消息' + event.data);
         var result = $.parseJSON(event.data);
         //只有当是新的消息的时间才加入
+        var element = document.getElementById('message-template').innerHTML;
+        $('.message-container').append(element);
+        $(".message-content:last").html(result.username+result.message);
         if (result.type == 3) {
-            var element = document.getElementById('message-template').innerHTML;
-            $('.message-container').append(element);
-            $(".message-content:last").html(result.message);
         }
         else {
             $('.chat-num').text(result.userNum);
