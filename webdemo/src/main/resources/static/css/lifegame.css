@@ -1,0 +1,13 @@
+.td-white {
+    background-color: white;
+    width: 20px;
+    height: 20px;
+}
+.td-black {
+    background-color: black;
+    width: 20px;
+    height: 20px;
+}
+.row{
+    margin-top: 100px;
+}

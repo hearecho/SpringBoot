@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer"/>
+    <title>用户关注</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/lifegame.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="/common/bar :: navbar"></div>
+
+<div class="container-fluid" >
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <form>
+                    <div class="form-group">
+                        <label>长度</label>
+                        <input type="text" class="form-control" id="rowText" placeholder="长度">
+                    </div>
+                    <div class="form-group">
+                        <label>宽度</label>
+                        <input type="text" class="form-control" id="colText" placeholder="宽度">
+                    </div>
+                    <div class="form-group">
+                        <label>当前代数</label>
+                        <input type="text" class="form-control" id="generateCount" placeholder="代数" readonly>
+                    </div>
+                    <button id="initButton" type="button" class="btn btn-primary">随机初始化</button>
+                    <button id="countCleanButton" type="button" class="btn btn-primary">代数清零</button>
+                    <button id="generateButton" type="button" class="btn btn-primary">繁衍</button>
+                </form>
+
+                <div id="table" style="margin-top: 20px" align="center"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+</body>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/gamelife.js"></script>
+</html>

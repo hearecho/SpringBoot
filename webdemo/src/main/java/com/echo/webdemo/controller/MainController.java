@@ -10,4 +10,9 @@ public class MainController {
         return "datashow/bilibili";
     }
 
+    @GetMapping("lifegame")
+    public String Test() {
+        return "lib/lifegame";
+    }
+
 }

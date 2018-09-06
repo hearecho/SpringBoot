@@ -27,9 +27,6 @@ public class bilibiliController {
     @PostMapping("/bili/getfollow")
     @ResponseBody
     public String getfollow(@RequestParam("mid")int mid) throws IOException {
-//        StringBuffer buffer = new StringBuffer();
-//        buffer.append(spider.getfollow(mid));
-//        buffer.append(spider.getUserInfo(mid));
 
         Map<String,String> follow ;
         Map<String,String> info;
