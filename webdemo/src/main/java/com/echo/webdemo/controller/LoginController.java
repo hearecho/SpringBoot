@@ -17,7 +17,7 @@ public class LoginController {
 
     @Autowired
     UserRepository userRepository;
-    @GetMapping(value = "/main")
+    @GetMapping(value = "/")
     public String index() {
         return "login/login";
     }

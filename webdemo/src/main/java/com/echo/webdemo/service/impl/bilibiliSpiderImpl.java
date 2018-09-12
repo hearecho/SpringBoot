@@ -25,7 +25,6 @@ public class bilibiliSpiderImpl implements bilibiliSpider {
         String url = "https://space.bilibili.com/ajax/member/GetInfo";
 
         String resu = dataService.PostReq(form,headers,url);
-//        System.out.println(resu);
         JSONObject jsonObject =JSONObject.parseObject(resu);
         Map<String,String> map = new HashMap<>();
 

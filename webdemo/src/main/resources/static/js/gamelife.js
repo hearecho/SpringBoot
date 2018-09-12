@@ -1,5 +1,6 @@
 var cellularArray;
 var cells;
+var TotalCount
 //根据参数控制页面显示的细胞阵列
 function createTable(cellularArray) {
     //清空控件内容
@@ -27,6 +28,7 @@ function createTable(cellularArray) {
 $("#initButton").click(function () {
     var rowCount = $("#rowText").val();
     var colCount = $("#colText").val();
+    TotalCount = rowCount * colCount;
     $.ajax({
         url: "/lifegame/init",
         type: "GET",
@@ -36,11 +38,15 @@ $("#initButton").click(function () {
             col: colCount
         },
         success: function (result) {
-            cellularArray = JSON.parse(result);
+            var str = result.split("*");
+            // console.log(str[0])
+            // console.log(str[1])
+            cellularArray = JSON.parse(str[0]);
             createTable(cellularArray);
+            $("#cellCount").val(str[1]/TotalCount)
         }
     });
-    $("#generateCount").val(0);
+    $("#generateCount").val(1);
 });
 
 //繁衍
@@ -48,7 +54,6 @@ $("#generateButton").click(function () {
     var rowCount = $("#rowText").val();
     var colCount = $("#colText").val();
     var generateCount = $("#generateCount").val();
-    // console.log(cellularArray)
     $.ajax({
         type: "POST",
         url: "/lifegame/generate",
@@ -59,8 +64,10 @@ $("#generateButton").click(function () {
             "col":colCount,
         },
         success: function (result) {
-            cellularArray = JSON.parse(result);
+            var str = result.split("*");
+            cellularArray = JSON.parse(str[0]);
             createTable(cellularArray);
+            $("#cellCount").val(str[1]/TotalCount)
         }
     });
     $("#generateCount").val(parseInt(generateCount) + 1);
@@ -68,6 +75,7 @@ $("#generateButton").click(function () {
 
 $("#countCleanButton").click(function () {
     $("#generateCount").val(0);
+    $("#cellCount").val(0)
 });
 
 

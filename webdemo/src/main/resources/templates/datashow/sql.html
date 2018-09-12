@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer"/>
+    <title>用户关注</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/sql.css" rel="stylesheet">
+</head>
+<body>
+<div th:replace="/common/bar :: navbar"></div>
+
+<div class="container-fluid" >
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group mb-9 diy">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Title</span>
+                            </div>
+                            <input type="text" class="form-control" id="title" placeholder="查询用的Title">
+                        </div>
+                        <div class="input-group mb-9 diy">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Date</span>
+                            </div>
+                            <input type="datetime-local" class="form-control" id="date">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group mb-9 diy">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Type</span>
+                            </div>
+                            <input type="text" class="form-control" id="type" placeholder="查询用的类型">
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <button type="button" class="btn btn-primary" id="query">查询</button>
+                <button type="button" class="btn btn-primary" id="insert">插入</button>
+                <button type="button" class="btn btn-primary" id="update">更新</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+</body>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/sql.js"></script>
+</html>

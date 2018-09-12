@@ -12,6 +12,8 @@ public class LifeGame {
 
     private CellStatus[][] cell;
 
+    private int CellCount = 0;
+
     public LifeGame() {
 
     }
@@ -28,6 +30,9 @@ public class LifeGame {
                 this.cell[i][j] = new CellStatus();
                 Random random = new Random();
                 this.cell[i][j].setCurretnStatus(Math.abs(random.nextInt()%2));
+                if (this.cell[i][j].getCurrentStatus()==1) {
+                    CellCount++;
+                }
                 judgePos(i,j);
             }
         }
@@ -44,6 +49,9 @@ public class LifeGame {
             for (int j=0;j<col;j++) {
                 this.cell[i][j] = new CellStatus();
                 this.cell[i][j].setCurretnStatus(cells[i][j]);
+                if (this.cell[i][j].getCurrentStatus()==1) {
+                    CellCount++;
+                }
                 judgePos(i,j);
             }
         }
@@ -60,14 +68,6 @@ public class LifeGame {
                 this.cell[i][j].setNextStatus(-1);
             }
         }
-    }
-
-    public CellStatus[][] getCell() {
-        return cell;
-    }
-
-    public void setCell(CellStatus[][] cell) {
-        this.cell = cell;
     }
 
     /**
@@ -264,5 +264,23 @@ public class LifeGame {
         }
     }
 
+    /**
+     * 获取活细胞数目
+     */
+    public int getCellCount() {
+        return CellCount;
+    }
+
+    public void setCellCount(int cellCount) {
+        CellCount = cellCount;
+    }
+
+    public CellStatus[][] getCell() {
+        return cell;
+    }
+
+    public void setCell(CellStatus[][] cell) {
+        this.cell = cell;
+    }
 }
 

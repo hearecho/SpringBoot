@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link rel="icon" href="https://getbootstrap.com/favicon.ico" />
+    <link rel="icon" th:href="@{/img/login.png}" />
 
     <title>登录页面</title>
     <!-- Bootstrap core CSS -->
@@ -15,12 +15,12 @@
 
 <body class="text-center" th:inline="text">
 <form class="form-signin" th:action="@{/user/login}" method="post">
-    <img class="mb-4" src="./login_files/bootstrap-solid.svg" th:src="@{/img/bootstrap-solid.svg}" alt="" width="72" height="72" />
-    <h1 class="h3 mb-3 font-weight-normal" >登陆</h1>
+    <img class="mb-4" src="./login_files/bootstrap-solid.svg" th:src="@{/img/login.png}" alt="" width="72" height="72" />
     <!--判断-->
     <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
     <label  class="sr-only" >Username</label>
     <input type="text"  name="username" class="form-control" placeholder="Username"  required="" autofocus=""/>
+    </br>
     <label for="inputPassword" class="sr-only" >Password</label>
     <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password"  required="" />
     <div class="checkbox mb-3">

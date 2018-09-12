@@ -1,6 +1,8 @@
 package com.echo.webdemo;
 
+import com.echo.webdemo.entity.SqlEntity;
 import com.echo.webdemo.entity.UserEntity;
+import com.echo.webdemo.repository.SqlRepository;
 import com.echo.webdemo.repository.UserRepository;
 import com.echo.webdemo.service.DataService;
 import com.echo.webdemo.service.impl.DataServiceImpl;
@@ -15,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
@@ -23,6 +26,11 @@ public class WebdemoApplicationTests {
 
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	SqlRepository sqlRepository;
+
+
 	DataService dataService=new DataServiceImpl();
 	@Test
 	public void contextLoads() {
@@ -70,14 +78,19 @@ public class WebdemoApplicationTests {
         }
     }
 
-    @Test
-    public void testJosn() {
-	    DealJson.DealJson("");
-    }
+
     @Test
     public void testDate() {
         String date = DealDate.TimeStampToString(1344500978L);
         System.out.println(date);
+    }
+
+    @Test
+    public void testSql() {
+	    List<SqlEntity> list = sqlRepository.findAll();
+	    for(SqlEntity sqlEntity:list) {
+	        System.out.println(sqlEntity.toString());
+        }
     }
 
 }

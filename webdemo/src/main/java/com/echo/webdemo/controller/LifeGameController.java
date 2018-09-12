@@ -21,8 +21,10 @@ public class LifeGameController {
         LifeGame lifeGame = new LifeGame(row,col);
         lifeGame.InitMap();
         int[][] cells;
+        int CellCount = lifeGame.getCellCount();
         cells = lifeGame.getCellCurrentStatus();
-        return JSON.toJSONString(cells);
+
+        return JSON.toJSONString(cells)+"*"+CellCount;
     }
 
     @PostMapping("/lifegame/generate")
@@ -41,8 +43,9 @@ public class LifeGameController {
         LifeGame lifeGame = new LifeGame(row,col);
         lifeGame.InitMap(cells,row,col);
         lifeGame.NextCellMap();
+        int CellCount = lifeGame.getCellCount();
         cells = lifeGame.getCellCurrentStatus();
-        return JSON.toJSONString(cells);
+        return JSON.toJSONString(cells)+"*"+CellCount;
     }
 
 }
