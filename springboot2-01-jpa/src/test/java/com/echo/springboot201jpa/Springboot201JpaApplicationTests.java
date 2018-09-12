@@ -1,7 +1,7 @@
 package com.echo.springboot201jpa;
 
-import com.echo.springboot201jpa.entity.UserEntity;
-import com.echo.springboot201jpa.repository.UserRepository;
+import com.echo.springboot201jpa.entity.*;
+import com.echo.springboot201jpa.repository.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,23 @@ public class Springboot201JpaApplicationTests {
 	@Autowired
     UserRepository userRepository;
 
+	@Autowired
+	PeopleRepository peopleRepository;
+
+	@Autowired
+	AddressRepository addressRepository;
+
+	@Autowired
+	ArticleRepository articleRepository;
+
+	@Autowired
+	AuthorRepository authorRepository;
+
+	@Autowired
+	PlayerRepository playerRepository;
+
+	@Autowired
+	GameRepository gameRepository;
 	@Test
 	public void contextLoads() {
 	}
@@ -70,6 +87,30 @@ public class Springboot201JpaApplicationTests {
 	    System.out.println(userRepository.getOne(1).toString());
     }
 
+    @Test
+	public void testOneToOne() {
+		PeopleEntity peopleEntity = peopleRepository.getOne(1L);
+		System.out.println(peopleEntity.toString());
 
+		AddressEntity addressEntity = addressRepository.getOne(1L);
+		System.out.println(addressEntity.toString());
+	}
+
+	@Test
+	public void testOneToMany() {
+		ArticleEntity articleEntity = articleRepository.getOne(1L);
+		System.out.println(articleEntity.toString());
+
+		AuthorEntity authorEntity = authorRepository.getOne(1L);
+		System.out.println(authorEntity.toString());
+	}
+
+	@Test
+	public void testManyToMnay() {
+		PlayerEntity playerEntity = playerRepository.getOne(1L);
+		System.out.println(playerEntity.toString());
+		GameEntity gameEntity = gameRepository.getOne(1);
+		System.out.println(gameEntity.toString());
+	}
 
 }
