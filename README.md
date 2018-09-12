@@ -86,6 +86,7 @@ spring:
    - 与非主键相关注解
 
      - **@Version** - 可以在实体bean中使用@Version注解，通过这种方式可添加对乐观锁定的支持（见参考链接）
+
      - **@Column** - 可将属性映射到列，使用该注解来覆盖默认值，@Column描述了数据库表中该字段的详细定义
        - **name** - 可选，表示数据库表中该字段的名称，默认情形属性名称一致
        - **nullable** - 可选，表示该字段是否允许为 null，默认为 true
@@ -94,11 +95,37 @@ spring:
        - **insertable** - 可选，表示在ORM框架执行插入操作时，该字段是否应出现INSETRT语句中，默认为 true
        - **updateable** - 可选，表示在ORM 框架执行更新操作时，该字段是否应该出现在UPDATE 语句中，默认为 true。对于一经创建就不可以更改的字段，该属性非常有用，如对于 birthday 字段
        - **columnDefinition** - 可选，表示该字段在数据库中的实际类型。通常ORM 框架可以根据属性类型自动判断数据库中字段的类型，但是对于Date 类型仍无法确定数据库中字段类型究竟是 DATE,TIME 还是 TIMESTAMP. 此外 ,String 的默认映射类型为 VARCHAR, 如果要将 String 类型映射到特定数据库的 BLOB或 TEXT 字段类型，该属性非常有用
+
      - **@Basic** - 用于声明属性的存取策略：
 
        - @Basic(fetch=FetchType.EAGER)   即时获取（默认的存取策略）
        - @Basic(fetch=FetchType.LAZY)       延迟获取
+
      - **@Transient** - 可选，表示该属性并非一个到数据库表的字段的映射，ORM框架将忽略该属性，如果一个属性并非数据库表的字段映射，就务必将其标示为@Transient，否则ORM框架默认其注解为 @Basic
+
+     - **@OneToOne**  
+
+       描述一个一对一的关联  可选  fetch：表示抓取策略，默认为FetchType.LAZY  cascade：表示级联操作策略 
+
+     - **@ManyToOne**  
+
+       表示一个多对一的映射,该注解标注的属性通常是数据库表的外键  optional：是否允许该字段为null，该属性应该根据数据库表的外键约束来确定，默认为true  可选  fetch：表示抓取策略，默认为FetchType.EAGER  cascade：表示默认的级联操作策略，可以指定为ALL，PERSIST，MERGE，REFRESH和REMOVE中的若干组合，默认为无级联操作  targetEntity：表示该属性关联的实体类型。该属性通常不必指定，ORM框架根据属性类型自动判断targetEntity。 
+
+     - **@OneToMany**  
+
+       描述一个一对多的关联,该属性应该为集体类型,在数据库中并没有实际字段。  fetch：表示抓取策略,默认为FetchType.LAZY,因为关联的多个对象通常不必从数据库预先读取到内存  可选  cascade：表示级联操作策略,对于OneToMany类型的关联非常重要,通常该实体更新或删除时,其关联的实体也应当被更新或删除  例如：实体User和Order是OneToMany的关系，则实体User被删除时，其关联的实体Order也应该被全部删除 
+
+     - **@ManyToMany**  
+
+       描述一个多对多的关联.多对多关联上是两个一对多关联,但是在ManyToMany描述中,中间表是由ORM框架自动处理  可选  targetEntity:表示多对多关联的另一个实体类的全名,例如:package.Book.class  mappedBy:表示多对多关联的另一个实体类的对应集合属性名称  两个实体间相互关联的属性必须标记为@ManyToMany,并相互指定targetEntity属性,  需要注意的是,有且只有一个实体的@ManyToMany注解需要指定mappedBy属性,指向targetEntity的集合属性名称  利用ORM工具自动生成的表除了User和Book表外,还自动生成了一个User_Book表,用于实现多对多关联 
+
+     - **@JoinColumn**  
+
+       @JoinColumn和@Column类似,介量描述的不是一个简单字段,而一一个关联字段,例如.描述一个@ManyToOne的字段.  name:该字段的名称.由于@JoinColumn描述的是一个关联字段,如ManyToOne,则默认的名称由其关联的实体决定.  例如,实体Order有一个user属性来关联实体User,则Order的user属性为一个外键,  其默认的名称为实体User的名称+下划线+实体User的主键名称  @JoinTable(name = “student_teacher”, inverseJoinColumns = @JoinColumn(name = “tid”), joinColumns = @JoinColumn(name = “sid”))  可选  由第三张表来维护两张表的关系  name：是关系表的名字  joinColumns：自己这一端的主键  inverseJoinColumns：对方的主键 
+
+     - **@Embedded**  
+
+       @Embedded将几个字段组合成一个类,并作为整个Entity的一个属性.  例如User包括id,name,city,street,zip属性.  我们希望city,street,zip属性映射为Address对象.这样,User对象将具有id,name和address这三个属性.  Address对象必须定义为@Embededable 
 
    - 关联属性相关的注解
 
