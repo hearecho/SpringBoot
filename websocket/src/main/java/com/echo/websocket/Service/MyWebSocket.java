@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 @Component
 @ServerEndpoint(value = "/webSocket/{homeId}",configurator = GetHttpSessionConfigurator.class)
+//@ServerEndpoint(value = "/webSocket/{homeId}")
 public class MyWebSocket {
     //日志
     Logger logger = LoggerFactory.getLogger(getClass());
@@ -49,8 +50,7 @@ public class MyWebSocket {
         this.session = session;
         webSockets.add(this);
 
-        HttpSession httpSession1 = (HttpSession) session.getUserProperties().get("javax.servlet.http.HttpSession");
-        System.out.println(httpSession1.getId());
+        System.out.println(session);
 
         /**
          * 设置信息类的内容

@@ -14,17 +14,17 @@ public class GetHttpSessionConfigurator extends ServerEndpointConfig.Configurato
     public void modifyHandshake(ServerEndpointConfig sec,
                                 HandshakeRequest request, HandshakeResponse response) {
 
-//        System.out.println(request.getHeaders());
-//        System.out.println(request.getRequestURI());
-//        System.out.println(request.getHttpSession());
-//        System.out.println(response.getHeaders());
-        HttpSession httpSession = (HttpSession)request.getHttpSession();
-        if (httpSession==null) {
-            System.out.println("session为null");
-            sec.getUserProperties().put(HttpSession.class.getName(),null);
-
-        } else {
-            sec.getUserProperties().put(HttpSession.class.getName(),httpSession);
-        }
+        System.out.println(request.getHeaders());
+        System.out.println(request.getRequestURI());
+        System.out.println(request.getHttpSession());
+        System.out.println(response.getHeaders());
+//        HttpSession httpSession = (HttpSession)request.getHttpSession();
+//        if (httpSession==null) {
+//            System.out.println("session为null");
+//            sec.getUserProperties().put(HttpSession.class.getName(),null);
+//
+//        } else {
+//            sec.getUserProperties().put(HttpSession.class.getName(),httpSession);
+//        }
     }
 }

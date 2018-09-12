@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
  * 失败 这样的处理方法可以得到 Session不是前端的那个 而是自己传过来的;
  *
  */
-@Component
+//@Component
 public class RequestListener implements ServletRequestListener {
     public RequestListener() {
         super();
