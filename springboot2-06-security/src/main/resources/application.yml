@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    username: root
+    password: ssf971114
+    url: jdbc:mysql://127.0.0.1:3306/java_web?useSSL=false&characterEncoding=utf-8&useUnicode=true
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
