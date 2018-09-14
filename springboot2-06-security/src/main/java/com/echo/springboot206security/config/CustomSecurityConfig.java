@@ -1,6 +1,7 @@
 package com.echo.springboot206security.config;
 
 import com.echo.springboot206security.bean.UrlAuthBean;
+import com.echo.springboot206security.bean.UserRoleBean;
 import com.echo.springboot206security.repository.UrlRepository;
 import com.echo.springboot206security.service.CustomUserService;
 import com.echo.springboot206security.service.SetUrlAuthService;
@@ -14,9 +15,19 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +48,10 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     SetUrlAuthService setUrlAuthService;
 
+    @Autowired
+    SessionRegistry sessionRegistry;
+
+
     /**
      * 设置对应的url和对应的权限也可以设置从数据库中读取
      * HttpSecurity : 主要配置路径，资源访问权限（是否需要权限，需要什么角色）
@@ -56,10 +71,15 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/hello").hasAnyRole("ADMIN","VIP");
         http.authorizeRequests().anyRequest().permitAll();
 
-        http.formLogin()
-                .permitAll().successForwardUrl(getSuccessUrl())
+        http.formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").defaultSuccessUrl(getSuccessUrl())
+                .and().sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry)
+                .and().and()
+                .logout()
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
                 .and()
-                .logout().permitAll();
+                .httpBasic()
+                .and().csrf().disable();
 
     }
 
@@ -87,6 +107,11 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+    @Bean
+    public SessionRegistry getSessionRegistry() {
+        SessionRegistry sessionRegistry = new SessionRegistryImpl();
+        return sessionRegistry;
+    }
     public String getLoginPage() {
         return loginPage;
     }
