@@ -1,12 +1,9 @@
 package com.echo.springboot206security.config;
 
 import com.echo.springboot206security.bean.UrlAuthBean;
-import com.echo.springboot206security.bean.UserRoleBean;
 import com.echo.springboot206security.repository.UrlRepository;
 import com.echo.springboot206security.service.CustomUserService;
 import com.echo.springboot206security.service.SetUrlAuthService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,20 +12,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -52,6 +38,8 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     SessionRegistry sessionRegistry;
 
 
+
+
     /**
      * 设置对应的url和对应的权限也可以设置从数据库中读取
      * HttpSecurity : 主要配置路径，资源访问权限（是否需要权限，需要什么角色）
@@ -71,7 +59,8 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/hello").hasAnyRole("ADMIN","VIP");
         http.authorizeRequests().anyRequest().permitAll();
 
-        http.formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password").defaultSuccessUrl(getSuccessUrl())
+        http.formLogin().loginPage("/login").usernameParameter("username").passwordParameter("password")
+                .defaultSuccessUrl(getSuccessUrl()).failureForwardUrl(getFaileUrl())
                 .and().sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry)
                 .and().and()
                 .logout()
@@ -103,6 +92,7 @@ public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public static NoOpPasswordEncoder passwordEncoder() {
         //这里使用了密码不进行加密验证，正式项目还是必须要用加密验证方式
+        System.out.println("调用了密码验证");
         return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
     }
 
