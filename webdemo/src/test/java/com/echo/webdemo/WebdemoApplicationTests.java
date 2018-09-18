@@ -1,8 +1,6 @@
 package com.echo.webdemo;
 
-import com.echo.webdemo.entity.SqlEntity;
 import com.echo.webdemo.entity.UserEntity;
-import com.echo.webdemo.repository.SqlRepository;
 import com.echo.webdemo.repository.UserRepository;
 import com.echo.webdemo.service.DataService;
 import com.echo.webdemo.service.impl.DataServiceImpl;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +23,6 @@ public class WebdemoApplicationTests {
 
 	@Autowired
 	UserRepository userRepository;
-
-	@Autowired
-	SqlRepository sqlRepository;
 
 
 	DataService dataService=new DataServiceImpl();
@@ -85,12 +79,5 @@ public class WebdemoApplicationTests {
         System.out.println(date);
     }
 
-    @Test
-    public void testSql() {
-	    List<SqlEntity> list = sqlRepository.findAll();
-	    for(SqlEntity sqlEntity:list) {
-	        System.out.println(sqlEntity.toString());
-        }
-    }
 
 }

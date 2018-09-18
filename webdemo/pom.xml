@@ -62,7 +62,10 @@
 			<artifactId>bootstrap</artifactId>
 			<version>4.1.3</version>
 		</dependency>
-
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-security</artifactId>-->
+		<!--</dependency>-->
 		<!--处理爬虫json数据-->
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>

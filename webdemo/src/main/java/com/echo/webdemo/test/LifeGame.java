@@ -17,7 +17,7 @@ public class LifeGame {
     public LifeGame() {
 
     }
-    public LifeGame(int row,int col) {
+    public LifeGame(final int row,final int col) {
         this.cell = new CellStatus[row][col];
     }
 
@@ -44,7 +44,7 @@ public class LifeGame {
      * @param row
      * @param col
      */
-    public void InitMap(int [][] cells,int row,int col){
+    public void InitMap(int [][] cells,final int row,final int col){
         for (int i=0;i<row;i++) {
             for (int j=0;j<col;j++) {
                 this.cell[i][j] = new CellStatus();
@@ -96,7 +96,7 @@ public class LifeGame {
      * @return
      */
 
-    private void judgePos(int row,int col) {
+    private void judgePos(final int row,final int col) {
         if(row==0&&col==0) {
             //左上角
             this.cell[row][col].setLocation(7);
@@ -134,7 +134,7 @@ public class LifeGame {
      * @param col 目标细胞所在的列
      * @return
      */
-    private int judgeAroundStatus(int row,int col) {
+    private int judgeAroundStatus(final int row,final int col) {
         int liveNum = 0;
 
         switch (this.cell[row][col].getLocation()) {
