@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,8 +18,15 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import java.util.List;
 
+/**
+ * @EnableGlobalMethodSecurity 开启spring security注解  直接在方法上进行注解
+ * prePostEnabled = true  对应 @PreAuthorize
+ * jsr250Enabled = true   对应 @RolesAllowed
+ * securedEnabled = true  对应 @Secured
+ */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true,jsr250Enabled = true,securedEnabled = true)
 public class CustomSecurityConfig extends WebSecurityConfigurerAdapter {
     private String loginPage = "/login";
     private String faileUrl = "/login?error=T";

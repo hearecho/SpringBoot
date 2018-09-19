@@ -1,5 +1,6 @@
 package com.echo.springboot206security.controller;
 import org.hibernate.annotations.Parameter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.security.RolesAllowed;
 
 /**
  * @author echo
@@ -37,6 +40,20 @@ public class LoginController {
     @ResponseBody
     public String admin() {
        return "test";
+    }
+
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
+    public String testAnn() {
+       return "使用注解的权限控制 @PreAuthorize";
+    }
+
+    @RequestMapping(value = "/test2")
+    @ResponseBody
+    @RolesAllowed({"ROLE_ADMIN"})
+    public String test2() {
+        return "使用注解的权限控制 @RolesAllowed";
     }
 
     @RequestMapping(value = "/login",method = {RequestMethod.POST,RequestMethod.GET})
