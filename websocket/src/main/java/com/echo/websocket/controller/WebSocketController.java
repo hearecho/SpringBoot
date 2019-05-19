@@ -47,6 +47,7 @@ public class WebSocketController {
         System.out.println(info);
         Message resp = new Message();
         resp.setMessage(message);
+        resp.setSendRole(userNick);
         WebSocketUtil.sendMessageForAll(resp);
     }
 

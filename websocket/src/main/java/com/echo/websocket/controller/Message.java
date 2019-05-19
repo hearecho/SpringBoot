@@ -2,6 +2,8 @@ package com.echo.websocket.controller;
 
 import java.io.Serializable;
 
+import com.alibaba.fastjson.serializer.JSONSerializer;
+
 /**
  * @author hearecho
  * @createtime 2019/5/18 15:47
@@ -37,8 +39,4 @@ public class Message implements Serializable {
         return this.message;
     }
 
-    public String toString() {
-        String resp = "{ \"sendRole\":"+sendRole+ ",\"message\":"+message+",\"receRole\":"+receRole+"}";
-        return resp;
-    }
 }

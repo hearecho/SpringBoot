@@ -2,6 +2,10 @@ package com.echo.websocket.controller;
 
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.JSONSerializer;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,7 +43,7 @@ public class WebSocketUtil {
         // getAsyncRemote()和getBasicRemote()异步与同步
         RemoteEndpoint.Async async = session.getAsyncRemote();
         //发送消息
-        async.sendText(message.toString());
+        async.sendText(ClassToJson(message));
     }
 
     /**
@@ -48,6 +52,12 @@ public class WebSocketUtil {
      */
     public static void sendMessageForAll(Message message) {
         //jdk8 新方法
-        ONLINE_SESSION.forEach((sessionId, session) -> sendMessage(session, message));
+        ONLINE_SESSION.forEach((sessionId, session) -> {
+            sendMessage(session, message);
+        });
+    }
+
+    private static String ClassToJson(Object o) {
+        return JSON.toJSONString(o);
     }
 }
